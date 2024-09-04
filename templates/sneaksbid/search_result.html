@@ -1,0 +1,207 @@
+{% extends './base.html' %}
+{% load static %}
+{% block content %}
+<style type="text/css">
+.sneaker-images {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around; /* Adjust alignment of items */
+    }
+.btn {
+        background-color: #000;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        width: 50%; /* Allow the button to size according to its content */
+        margin-top: auto; /* Pushes the button to the bottom of the card */
+    }
+   .btn:hover {
+        background-color: #333;
+    }
+
+.sneaker {
+	width: calc(25% - 20px); /* Set width for each sneaker container */
+	margin-bottom: 20px; /* Add some space between sneakers */
+	text-align: center; /* Center align content */
+	position: relative; /* Position relative for absolute positioning of overlay */
+}
+
+.sneaker img {
+	width: 100%; /* Make the image fill the container width */
+	height: auto; /* Maintain aspect ratio */
+	max-height: 200px; /* Set maximum height */
+	transition: transform 0.3s; /* Add transition for smooth effect */
+}
+
+.sneaker h3 {
+	margin-top: 10px; /* Add margin to top of title */
+}
+
+.sneaker:hover img {
+    transform: scale(1.1); /* Scale up the image on hover */
+}
+
+.sneaker-overlay {
+    position: absolute; /* Position absolute for overlay */
+    top: 0; /* Align overlay to the top */
+    left: 0; /* Align overlay to the left */
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-color: rgba(246, 242, 242, 0); /* Semi-transparent black background */
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.3s; /* Add transition for smooth effect */
+    display: flex; /* Use flexbox for centering */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+}
+
+.sneaker:hover .sneaker-overlay {
+    opacity: 1; /* Show overlay on hover */
+}
+
+.sneaker p {
+	margin-bottom: 5px; /* Add margin to bottom of paragraphs */
+}
+
+.sneaker .btn {
+	margin-top: 10px; /* Add margin to top of button */
+}
+.search-form {
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+input[type='text'], input[type='number'], input[type='password']{
+    border: 1px solid #cecece !important;
+    margin-bottom: 5px;
+}
+
+.search-input {
+	padding: 8px;
+	border-color:   #4CAF50;
+	border-radius: 4px;
+	margin-right: 5px;
+	margin-top: 10px;
+    border: 1px solid #cecece !important;
+}
+
+.search-button {
+	padding: 8px 16px;
+	/* border: none; */
+	background-color: #4CAF50;
+    border: 1px solid #4CAF50;
+	color: white;
+    border-radius: 0 4px 4px 0;
+	border-radius: 4px;
+	cursor: pointer;
+    margin-left: -5px;
+}
+
+.search-button:hover {
+	background-color: #45a049;
+}
+
+#brand_filter_button,
+#search_price_button{
+    padding: 8px 16px;
+    border: none;
+    background-color: #4CAF50;
+    border: 1px solid #4CAF50;
+    color: white;
+    border-radius: 4px;
+    margin-top: 5px;
+}
+
+#id_brand{
+    padding: 8px;
+    border: 1px solid #cecece;
+    border-radius: 4px;
+    width: 40%;
+}
+</style>
+
+</head>
+<body>
+    <!-- Title Page -->
+    <section class="bg-title-page p-t-50 p-b-40 flex-col-c-m" style="background-image: url(/static/images/sneaksbid.jpg);">
+        <h2 class="l-text2 t-center">
+            Shop
+        </h2>
+        <p class="m-text13 t-center">
+            All categories
+        </p>
+    </section>
+
+    <!-- Search Bar -->
+    <form action="{% url 'search_sneakers' %}" method="GET" class="search-form">
+        <input type="text" name="query" placeholder="Search shoes by name" class="search-input">
+        <button type="submit" class="search-button">Search</button>
+    </form>
+
+    <!-- Display Search Results -->
+    <div class="sneaker-images">
+        {% if search_results %}
+            {% for sneaker in search_results %}
+            <div class="sneaker">
+                <img src="{{ sneaker.image.url }}" alt="{{ sneaker.title }}">
+                <h3>{{ sneaker.title }}</h3>
+                <p>Description: {{ sneaker.description }}</p>
+                <p>Price: ${{ sneaker.base_price }}</p>
+                {% if sneaker.is_auction_active %}
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'place_bid' item_id=sneaker.id %}" class="btn btn-primary">Place Bid</a>
+                    <p>Auction is active!</p>
+                    {% endif %}
+                        <div id="auction-timer-{{ sneaker.id }}" class="auction-timer" data-end-time="{{ sneaker.post_time|date:'c' }}" data-duration-seconds="{{ sneaker.auction_duration.total_seconds }}">
+        Auction ends in approximately {{ item.duration_days }} days, {{ item.duration_hours }} hours, {{ item.duration_minutes }} mins
+    </div>
+                {% else %}
+                    <p>Auction is not active.</p>
+                            <a href="{% url 'place_bid' item_id=sneaker.id %}" class="btn btn-primary">View Bid</a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No search results found.</p>
+        {% endif %}
+    </div>
+        <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const timers = document.querySelectorAll('.auction-timer');
+
+    timers.forEach(function(timer) {
+        const endTime = new Date(timer.getAttribute('data-end-time')).getTime();
+        const durationSeconds = parseInt(timer.getAttribute('data-duration-seconds'), 10);
+        const auctionEndTime = endTime + (durationSeconds * 1000);
+
+        const updateCountdown = () => {
+            const now = new Date().getTime();
+            const timeLeft = auctionEndTime - now;
+
+            if (timeLeft < 0) {
+                timer.innerHTML = "Auction ended";
+                clearInterval(interval); // Stop updating when the auction ends
+                return;
+            }
+
+            // Calculate days, hours, minutes, and seconds
+            let days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            let hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            let minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+            // Update the timer's content
+            timer.innerHTML = `Auction ends in approximately ${days}d ${hours}h ${minutes}m ${seconds}s`;
+        };
+
+        // Update the countdown every second
+        updateCountdown(); // Update immediately to avoid delay
+        const interval = setInterval(updateCountdown, 1000);
+    });
+});
+</script>
+{% endblock content %}

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us - Sneaks Bid</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .contact-container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    padding: 50px;
+    width: 100%;
+    max-width: 800px;
+  }
+
+  .contact-header {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+
+  .contact-header h2 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+  }
+
+  .contact-header p {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+  }
+.contact-details {
+    justify-content: center;
+}
+  .contact-detail {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.2rem;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .contact-detail i {
+    font-size: 1.5rem;
+  }
+
+  .home-button {
+    display: block;
+    width: max-content;
+    margin: 30px auto;
+    background: #333;
+    color: white;
+    padding: 10px 30px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background 0.3s ease;
+  }
+
+  .home-button:hover {
+    background: #555;
+  }
+</style>
+</head>
+<body>
+
+<div class="contact-container">
+  <div class="contact-header">
+    <h2>Contact Us</h2>
+    <p>Reach out to Sneaks Bid for inquiries, support, or feedback. We're here to help.</p>
+  </div>
+
+  <div class="contact-details">
+    <div class="contact-detail">
+      <i class="fas fa-envelope"></i>
+      <span>Email: SneaksBid@gmail.com</span>
+    </div>
+    <div class="contact-detail">
+      <i class="fas fa-phone"></i>
+      <span>Ph no: +1 8890000111</span>
+    </div>
+    <div class="contact-detail">
+      <i class="fab fa-facebook"></i>
+      <a href="https://www.facebook.com" target="_blank">Facebook</a>
+    </div>
+    <div class="contact-detail">
+      <i class="fab fa-instagram"></i>
+      <a href="https://www.instagram.com" target="_blank">Instagram</a>
+    </div>
+  </div>
+
+  <a href="{% url 'home' %}" class="home-button">Return to Home</a>
+</div>
+
+</body>
+</html>

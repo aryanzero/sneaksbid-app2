@@ -1,0 +1,184 @@
+{% extends './base.html' %}
+ {% load static %}
+{% block content %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+      body {
+        font-family: 'Roboto', sans-serif;
+        background: url({% static 'images/bg5.webp' %}) no-repeat center center fixed;
+        background-size: cover;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Ensure content is centered horizontally */
+        min-height: 100vh; /* Minimum height to fill the viewport */
+    }
+
+    .header {
+        background-color: #f8f8f8;
+        padding: 20px;
+        text-align: center;
+        width: 100%;
+    }
+
+    .container {
+        max-width: 500px;
+        width: 90%; /* Responsive width */
+        margin: 90px auto; /* Add top and bottom margin */
+        padding: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 10px;
+        position: relative; /* Position relative to its normal position */
+        z-index: 1; /* Ensure it's above the background but below modal/pop-up elements */
+    }
+#footer-main {
+    width: 100%;
+}
+    .user-card {
+        padding: 20px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .profile-image .avatar {
+        width: 120px; /* Fixed width */
+        height: 120px; /* Fixed height */
+        border-radius: 50%;
+        border: 5px solid #ffffff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        object-fit: cover; /* Ensure the image covers the area without distortion */
+    }
+
+    .user-info h2, .user-info p {
+        color: #333;
+        margin: 5px 0;
+        word-break: break-word; /* Ensures text breaks to prevent overflow */
+    }
+
+    .form-group {
+        margin-bottom: 5px;
+    }
+
+    label {
+        display: block;
+        color: #666;
+        margin-bottom: 5px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="file"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
+    button[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #333;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #444;
+    }
+</style>
+</head>
+<body>
+{#    <div class="header">#}
+{#        <span>Profile</span>#}
+{#    </div>#}
+
+    <div class="container">
+        <!-- Display Messages -->
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- User Card -->
+        <div class="user-card">
+            <div class="profile-image">
+                <!-- Profile Image -->
+                {% if request.user.profile.images %}
+                    <img src="{{ request.user.profile.images.url }}" alt="Profile Image" class="avatar">
+                {% else %}
+                    <img src="{% static 'images/bi.png' %}" alt="Default Image" class="avatar">
+                {% endif %}
+            </div>
+            <div class="user-info">
+                <!-- User Info -->
+                <h2>Sneakerhead:{{ request.user.first_name }} {{ request.user.last_name }}</h2>
+                <p>Username:{{ request.user.username }}</p>
+                <p>{{ request.user.email }}</p>
+                <!-- Example bio -->
+            </div>
+
+        </div>
+
+        <!-- User Profile Form -->
+        <div class="profile-form">
+            <h3>User Profile</h3>
+            <form method="post" action="{% url 'dashboard' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for field in user_form %}
+                    {% if field.name != "password" and field.name != "email" and field.name != "new_password" and field.name != "new_password_confirmation" %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+                <div class="form-group">
+                    <label for="{{ image_form.images.id_for_label }}">Profile Image</label>
+                    {{ image_form.images }}
+                </div>
+                <button type="submit" name="update_profile">Update Profile</button>
+            </form>
+        </div>
+
+        <!-- Change Password Form -->
+        <div class="password-change-form">
+            <h3>Change Password</h3>
+            <form method="post" action="{% url 'dashboard' %}">
+                {% csrf_token %}
+                {% for field in password_form %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                    </div>
+                {% endfor %}
+                <button type="submit" name="change_password">Change Password</button>
+            </form>
+        </div>
+    </div>
+
+   </div>
+</body>
+</html>
+{% endblock %}

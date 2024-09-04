@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% include "./header.html" %}
+    <title>{% block head_title %}{% endblock head_title %}</title>
+    {% block extra_head %}{% endblock extra_head %}
+    <style type="text/css">
+      .form-control {
+        display: block;
+        width: 100%;
+        height: calc(1.5em + 0.75rem + 2px);
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da !important;
+        border-radius: 0.25rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+      }
+    </style>
+  </head>
+  <body>
+    {% include "./nav.html" %}
+
+    <div class="mt-2">
+      {% if messages %} {% for message in messages %}
+      <div
+        class="alert alert-{{ message.tags }} alert-dismissible fade show"
+        role="alert"
+      >
+        {{ message }}
+        <button
+          type="button"
+          class="close"
+          data-dismiss="alert"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      {% endfor %} {% endif %}
+    </div>
+
+  {% block content %}{% endblock content %}
+  {% block extra_body %}{% endblock extra_body %}
+  {% include "./footer.html" %}
+  {% include "./script.html" %}
+  {% block extra_scripts %}{% endblock extra_scripts %}
+  </body>
+</html>

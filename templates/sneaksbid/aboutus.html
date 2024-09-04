@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Us - Sneaks Bid</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"> <!-- for icons -->
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f4;
+  }
+
+  .about-section {
+    text-align: center;
+    padding: 50px 20px;
+  }
+
+  .about-section h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+  }
+
+  .about-section p {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+  }
+
+  .qualities {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    padding: 0 50px;
+  }
+
+  .quality {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+
+  .quality i {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    color: #2c3e50; /* Icon color */
+  }
+
+  .quality h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+
+  .quality p {
+    font-size: 1rem;
+    color: #666;
+  }
+
+  .home-button {
+    display: block;
+    width: max-content;
+    margin: 20px auto;
+    background: #333;
+    color: white;
+    padding: 10px 30px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background 0.3s ease;
+  }
+
+  .home-button:hover {
+    background: #555;
+  }
+   .sneaker-images {
+    padding: 40px 0;
+    background-color: white;
+  }
+
+  .sneaker-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .sneaker-image img {
+    width: 50vw;
+    height: auto;
+    border-radius: 0;
+    box-shadow: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="about-section">
+  <h2>About Sneaks Bid</h2>
+  <p>Discover the world of rare and exclusive sneakers with Sneaks Bid, where every bid takes you one step closer to your dream pair.</p>
+  <a href="{% url 'home' %}" class="home-button">Return to Home</a>
+</div>
+
+<div class="qualities">
+  <div class="quality">
+    <i class="fas fa-shoe-prints"></i> <!-- Choose an icon from FontAwesome -->
+    <h3>Diverse Collection</h3>
+    <p>From vintage finds to the latest drops, explore a wide array of sneakers for every style and occasion.</p>
+  </div>
+
+  <div class="quality">
+    <i class="fas fa-user-shield"></i>
+    <h3>Trusted Authentication</h3>
+    <p>Every sneaker undergoes rigorous checks for authenticity, so you can bid and buy with confidence.</p>
+  </div>
+
+  <div class="quality">
+    <i class="fas fa-globe"></i>
+    <h3>Worldwide Reach</h3>
+    <p>Connect with sneakerheads around the globe and gain access to sneakers you won't find anywhere else.</p>
+  </div>
+
+  <div class="quality">
+    <i class="fas fa-lock"></i>
+    <h3>Secure Transactions</h3>
+    <p>Your safety is our priority. Enjoy a secure marketplace with protected payments and privacy.</p>
+  </div>
+
+</div>
+<div class="sneaker-images">
+  <div class="sneaker-image">
+    <img src="{% static 'images/about.webp' %}" alt="Vintage Inspired Sneaker">
+  </div>
+</div>
+</body>
+</html>

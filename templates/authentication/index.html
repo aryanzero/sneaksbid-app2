@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    {% load static %}
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-image: url({% static 'images/bg1.jpeg' %}); /* Update this path to the exact location of your image */
+            background-size: cover; /* Cover the entire page */
+            background-position: center;
+            background-repeat: no-repeat;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff; /* Change text color for better visibility */
+        }
+
+        .alert, h3, h4 {
+            background-color: rgba(0, 0, 0, 0.6); /* Dark background for text for better readability */
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        h3, h4 {
+            margin: 10px 0; /* Ensure some spacing around headings */
+            text-shadow: 2px 2px 4px #000; /* Text shadow for better visibility */
+        }
+
+        button[type="submit"], button[type="submit"]:hover {
+            width: auto;
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #333; /* Same style as the form buttons */
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background-color 0.3s; /* Smooth transition for hover effect */
+        }
+
+        button[type="submit"]:hover {
+            background-color: #444;
+        }
+
+        button[type="submit"] a {
+            color: white;
+            text-decoration: none;
+            display: block; /* Ensure the link covers the entire button area */
+        }
+
+    </style>
+</head>
+<body>
+
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    <strong>Message:</strong> {{ message }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{% endfor %}
+
+<div>
+    <h3>Welcome to SneaksBid!</h3>
+
+    {% if user.is_authenticated %}
+        <h3>Hello {{ user.first_name }}!</h3>
+        <h4>You're successfully logged in. Redirecting to homepage in <span id="countdown">3</span> seconds...</h4>
+        <button type="submit"><a href="/signout">Sign Out</a></button>
+
+        <script>
+            // JavaScript for countdown and redirect
+            var timeLeft = 3; // seconds
+            var countdownElement = document.getElementById('countdown');
+            var timerId = setInterval(countdown, 1000);
+
+            function countdown() {
+                if (timeLeft == 0) {
+                    clearTimeout(timerId);
+                    window.location.href = '/'; // Redirect to homepage
+                } else {
+                    countdownElement.innerHTML = timeLeft;
+                    timeLeft--;
+                }
+            }
+        </script>
+    {% else %}
+        <button type="submit"><a href="/signup">Sign Up</a></button>
+        <button type="submit"><a href="/signin">Sign In</a></button>
+    {% endif %}
+</div>
+</body>
+</html>

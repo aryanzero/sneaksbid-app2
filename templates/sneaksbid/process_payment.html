@@ -1,0 +1,11 @@
+{% extends './base.html' %}
+{% block content %}
+<h2>Processing Payment...</h2>
+<p>Please wait while we process your payment.</p>
+  {% load static %}
+  <script src="https://js.stripe.com/v3/"></script>
+  <script src="{% static 'js/payment.js' %}"></script>
+  <script>
+    processPayment('{{ client_secret }}');
+  </script>
+{% endblock %}

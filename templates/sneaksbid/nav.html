@@ -1,0 +1,86 @@
+{% load static %}
+
+<style>
+.topbar {
+  background-color: white;
+  color: black !important;
+}
+
+.topbar a:hover {
+  color: black;
+}
+
+.wrap_menu {
+  display: flex;
+  justify-content: space-between; /* Adjusted to space between */
+}
+
+.userimage img {
+  width: 40px; /* Adjust based on your design needs */
+  height: 40px;
+  border-radius: 50%; /* Circular images */
+  object-fit: cover; /* Ensure the image covers the area */
+  border: 2px solid #f8f8f8; /* Optional: Adds a border around the image */
+}
+
+/* Style for user history button */
+.user-history-btn {
+  display: flex;
+  align-items: center; /* Center the icon vertically */
+  margin-left: 10px; /* Adjust spacing between items */
+}
+.right-nav{
+  
+}
+</style>
+
+<!-- Header -->
+<header class="header1">
+  <!-- Header desktop -->
+  <div class="container-menu-header">
+    <div class="wrap_header">
+      <!-- Logo -->
+      <a href="{% url 'home' %}" class="logo">
+        <p style="color: black"><b style="font-size: 22px">S</b>neaks Bid</p>
+      </a>
+
+      <!-- Menu -->
+      <div class="wrap_menu">
+        <nav class="menu">
+          <ul class="main_menu">
+            {% if user.is_authenticated %}
+              <li><a href="{% url 'home' %}">Home</a></li>
+              <li><a href="{% url 'shop' %}">Shop</a></li>
+              <li><a href="{% url 'add_shoe' %}">Sell</a></li>
+              <li><a href="{%url 'view_cart' %}">Cart</a></li>
+              <li>
+                <a href="{% url 'user_history' %}" class="user-history-btn">
+                   User History
+                </a>
+              </li>
+
+              <li>
+                <div class="userimage">
+                  {% if request.user.profile.images %}
+
+                       <a href="{% url 'dashboard' %}"><img src="{{ request.user.profile.images.url }}" alt="Profile Image" class="avatar"></a>
+
+
+                  {% else %}
+
+                         <a href="{% url 'dashboard' %}">Profile</a>
+
+                  {% endif %}
+                </div>
+              </li>
+                 <li><a href="{% url 'signout' %}">Logout</a></li>
+            {% else %}
+              <li><a href="{% url 'signin' %}">Sign in</a></li>
+              <li><a href="{% url 'signup' %}">Sign up</a></li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>

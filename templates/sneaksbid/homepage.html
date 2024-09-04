@@ -1,0 +1,211 @@
+{% extends './base.html' %}
+{% load static %}
+{% block content %}
+<!-- New Product -->
+<style>
+  .newproduct {
+    margin-bottom: 2px;
+    padding-bottom: 2px;
+  }
+</style>
+<style>
+  /* Styles for featured products */
+  .block2-img:hover img {
+    transform: scale(1.03); /* Scale up on hover */
+  }
+
+  /* Remove darkening effect on hover */
+
+
+  .block2-img:hover .block2-overlay {
+    background-color: #00ffff00; /* Remove the background color on hover */
+  }
+
+
+  .block2-img:hover .block2-overlay .block2-btn-addwishlist {
+    visibility: visible;
+    opacity: 1;
+  }
+
+</style>
+<section class="slide1">
+  <div class="wrap-slick2">
+    <div class="slick1">
+      <div
+        class="item-slick1 item2-slick1"
+        style="background-image: url('{% static 'images/sneaksbid.jpg' %}')"
+      >
+        <!-- Header -->
+        <span
+          class="caption1-slide1 l-text1 t-center m-t-15"
+          style="position: absolute; top: 0; width: 100%"
+          data-appear="rollIn"
+        >
+          Unlock the deals Now
+        </span>
+        <!-- Footer -->
+           {% if user.is_authenticated %}
+        <span
+          class="caption1-slide1 m-text1 t-center m-b-15"
+          style="position: absolute; bottom: 0; width: 100%"
+          data-appear="rollIn"
+        >
+          Dive into the world of exclusive sneaker auctions.
+        </span>
+               {% else %}
+                 <span
+                      class="caption1-slide1 m-text1 t-center m-b-15"
+                      style="position: absolute; bottom: 0; width: 100%"
+                      data-appear="rollIn"
+                    >
+          Dive into the world of exclusive sneaker auctions. Sign up or log in
+          now to get started
+        </span>
+          {% endif %}
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="newproduct bgwhite p-t-45 p-b-105">
+  <div class="container">
+    <div class="sec-title p-b-60">
+      <h3 class="m-text5 t-center">Featured Products</h3>
+    </div>
+    <div class="wrap-slick2">
+      <div class="slick2">
+        {% for item in object_list %}
+        <div class="item-slick2 p-l-15 p-r-15">
+          <div class="block2">
+            <div
+              class="block2-img wrap-pic-w of-hidden pos-relative block2-label{{item.get_label_display}}"
+            >
+              <img
+                src="{{ item.image.url }}"
+                alt="{{ item.title }}"
+                class="featured-img"
+              />
+              <div class="block2-overlay trans-0-4">
+              </div>
+            </div>
+
+            {% if user.is_authenticated %}
+            <div class="block2-txt p-t-20">
+              <a
+                href="{% url 'item_detail' item_id=item.id %}"
+                class="block2-name dis-block s-text3 p-b-5"
+                >{{ item.title }}</a
+              >
+              {% if item.is_auction_active %}
+              <span class="block2-price m-text6 p-r-5"
+                >${{ item.base_price }}</span
+              >
+              <div
+                id="auction-timer-{{ item.id }}"
+                class="auction-timer"
+                data-end-time="{{ item.post_time|date:'c' }}"
+                data-duration-seconds="{{ item.auction_duration.total_seconds }}"
+              >
+                Auction ends in approximately {{ item.duration_days }} days, {{
+                item.duration_hours }} hours, {{ item.duration_minutes }} mins
+              </div>
+              {% else %}
+              <span class="block2-price m-text6 p-r-5">Auction not live</span>
+              {% endif %}
+            </div>
+            {%else%}
+            <div class="block2-txt p-t-20">
+              <span class="block2-name dis-block s-text20 p-b-5"
+                >{{ item.title }}</span
+              >
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .slide1 button:hover {
+    background-color: white !important;
+    color: black;
+  }
+</style>
+<br /><br />
+
+<!-- Display visit count -->
+<p style="text-align: center;">You have visited this website {{ visit_count }} times.</p>
+
+<!-- Shipping -->
+<section class="shipping bgwhite p-t-62 p-b-46">
+  <div class="flex-w p-l-15 p-r-15">
+    <div class="flex-col-c w-size5 p-l-15 p-r-15 p-t-16 p-b-15 respon1">
+      <h4 class="m-text12 t-center">Sneaker Drops & Bidding Events</h4>
+<span class="s-text11 t-center">
+        Stay updated on the latest drops and bidding events
+</span>
+    </div>
+
+    <div class="flex-col-c w-size5 p-l-15 p-r-15 p-t-16 p-b-15 bo2 respon2">
+      <h4 class="m-text12 t-center">Live Sneaker Auction</h4>
+
+      <span class="s-text11 t-center">
+        Win exclusive sneakers by placing the winning bid.
+      </span>
+    </div>
+
+    <div class="flex-col-c w-size5 p-l-15 p-r-15 p-t-16 p-b-15 respon1">
+      <h4 class="m-text12 t-center">Sell Your Sneakers</h4>
+
+      <span class="s-text11 t-center">
+        Join now and easily sell your sneakers to buyers worldwide.
+      </span>
+    </div>
+  </div>
+</section>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const timers = document.querySelectorAll(".auction-timer");
+
+    timers.forEach(function (timer) {
+      const endTime = new Date(timer.getAttribute("data-end-time")).getTime();
+      const durationSeconds = parseInt(
+        timer.getAttribute("data-duration-seconds"),
+        10
+      );
+      const auctionEndTime = endTime + durationSeconds * 1000;
+
+      const updateCountdown = () => {
+        const now = new Date().getTime();
+        const timeLeft = auctionEndTime - now;
+
+        if (timeLeft < 0) {
+          timer.innerHTML = "Auction ended";
+          clearInterval(interval); // Stop updating when the auction ends
+          return;
+        }
+
+        // Calculate days, hours, minutes, and seconds
+        let days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+        let hours = Math.floor(
+          (timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        let minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+        // Update the timer's content
+        timer.innerHTML = `Auction ends in approximately ${days}d ${hours}h ${minutes}m ${seconds}s`;
+      };
+
+      // Update the countdown every second
+      updateCountdown(); // Update immediately to avoid delay
+      const interval = setInterval(updateCountdown, 1000);
+    });
+  });
+</script>
+
+{% endblock content %}

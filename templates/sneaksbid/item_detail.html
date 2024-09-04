@@ -1,0 +1,211 @@
+
+{% extends './base.html' %}
+
+{% block content %}
+<style>
+    .flex-container {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 30px;
+        padding-top: 20px;
+    }
+
+    .shoe-image {
+        flex-basis: auto;
+        max-width: 400px;
+        border-radius: 4px;
+    }
+
+    .item-details {
+        flex-grow: 1;
+        flex-basis: calc(50% - 30px);
+        max-width: 600px;
+        background: #FFFFFF;
+        padding: 20px;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn {
+        background-color: #000;
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        width: 50%;
+        margin-top: auto;
+    }
+
+    .btn:hover {
+        background-color: #000000a6;
+        color: #fff;
+    }
+
+    .graph-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    }
+
+    #bidding-history-chart {
+        width: 50%;
+        max-width: 700px;
+        height: 300px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .flex-container {
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+</style>
+<div class="flex-container">
+    <!-- Item Image -->
+    <div class="shoe-image">
+        <img src="{{ item.image.url }}" alt="{{ item.title }}" style="width: 100%; border-radius: 4px;">
+    </div>
+
+     <div class="item-details">
+        <h2>{{ item.title }}</h2>
+        <p class="description">{{ item.description }}</p>
+        <p>Base Price: ${{ item.base_price }}</p>
+        {% if item.bids.all %}
+            <p>Current Bid: ${{ item.bids.last.bid_amount }}</p>
+        {% else %}
+            <p>No bids placed yet.</p>
+        {% endif %}
+        {% if user.is_authenticated %}
+            {% if is_auction_active %}
+                <a href="{% url 'place_bid' item_id=item.id %}" class="btn">Place Bid</a>
+            {% endif %}
+        {% endif %}
+        <div id="auction-timer-{{ item.id }}" class="auction-timer" data-end-time="{{ item.post_time|date:'c' }}" data-duration-seconds="{{ item.auction_duration.total_seconds }}">
+            Auction ends in approximately {{ item.duration_days }} days, {{ item.duration_hours }} hours, {{ item.duration_minutes }} mins
+        </div>
+        {% if not is_auction_active  %}
+            <p>Winner: {{ winning_bid.user.username }}</p>
+            <a href="{% url 'place_bid' item_id=item.id %}" class="btn">View Bid details</a>
+
+        {% endif %}
+    </div>
+</div>
+
+<div class="graph-container">
+    <canvas id="bidding-history-chart"></canvas>
+</div>
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const timers = document.querySelectorAll('.auction-timer');
+
+    timers.forEach(function(timer) {
+        const endTime = new Date(timer.getAttribute('data-end-time')).getTime();
+        const durationSeconds = parseInt(timer.getAttribute('data-duration-seconds'), 10);
+        const auctionEndTime = endTime + (durationSeconds * 1000);
+
+        const updateCountdown = () => {
+            const now = new Date().getTime();
+            const timeLeft = auctionEndTime - now;
+
+            if (timeLeft < 0) {
+                timer.innerHTML = "Auction ended";
+                clearInterval(interval);
+                return;
+            }
+
+            let days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+            let hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            let minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+            timer.innerHTML = `Auction ends in approximately ${days}d ${hours}h ${minutes}m ${seconds}s`;
+        };
+
+        updateCountdown();
+        const interval = setInterval(updateCountdown, 1000);
+    });
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctx = document.getElementById('bidding-history-chart').getContext('2d');
+var chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+            labels: [{% for bid in item.bids.all|slice:"-10:" %}"{{ bid.bid_time|date:"M d" }}",{% endfor %}],
+            datasets: [{
+                label: 'Bidding History',
+                data: [{% for bid in item.bids.all|slice:"-10:" %}{{ bid.bid_amount }},{% endfor %}],
+                       backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 4,
+            pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgba(255, 99, 132, 1)'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true,
+                    stepSize: 1,
+                    // Increase font size for y-axis ticks
+                    fontSize: 14,
+                    fontWeight: 800,
+                    // Custom formatting can go here if needed
+                    callback: function(value, index, values) {
+                        return value;
+                    }
+                },
+                gridLines: {
+                    color: 'rgba(0, 0, 0, 0.1)'
+                }
+            }],
+            xAxes: [{
+                ticks: {
+                    // Increase font size for x-axis ticks
+                    fontSize: 14,
+                    fontWeight: 800
+                },
+                gridLines: {
+                    color: 'rgba(0, 0, 0, 0)',
+
+                }
+            }]
+        },
+         elements: {
+            point: {
+                radius: 7,
+                borderWidth: 8,
+            }
+        },
+        legend: {
+            display: true,
+            labels: {
+
+                fontSize: 14,   
+                fontColor: 'rgba(0, 0, 0, 0.7)'
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

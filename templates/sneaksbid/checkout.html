@@ -1,0 +1,158 @@
+{% extends './base.html' %}
+ {% load static %}
+{% block content %}
+<style>
+    .checkout-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        border-radius: 10px;
+        text-align: center;
+    }
+ .form-field {
+        margin-bottom: 15px;
+    }
+
+    .form-field label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .form-field input {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    .checkout-container h2 {
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .checkout-container form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .checkout-container label {
+        text-align: left;
+        margin: 10px 0 5px;
+    }
+
+    .checkout-container input[type="text"],
+    .checkout-container input[type="submit"] {
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .checkout-container input[type="submit"] {
+        background-color: #4CAF50;
+        color: white;
+        cursor: pointer;
+    }
+
+    .checkout-container input[type="submit"]:hover {
+        background-color: #45a049;
+    }
+
+    .checkout-container .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 10px;
+        margin-top: 10px;
+        border-radius: 5px;
+        border: 1px solid #f5c6cb;
+    }
+
+    .checkout-container ul {
+        list-style-type: none;
+        padding: 0;
+    }
+  .payment-options {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 20px;
+    }
+
+    /* Style for each payment option label */
+    .payment-option-label {
+        display: flex;
+        align-items: center;
+        margin: 5px 0;
+    }
+
+    /* Style for the radio buttons */
+    .payment-option-label input[type="radio"] {
+        margin-right: 10px;
+    }
+
+    /* Style for the payment option images */
+    .payment-option-label img {
+        height: 20px;
+        margin-right: 10px;
+    }
+
+    /* Style for the submit button */
+    .submit-button {
+        width: 100%;
+        height: 40px;
+        margin-top: 20px;
+        font-size: 16px;
+    }
+</style>
+<div class="checkout-container">
+    <h2>Checkout</h2>
+    <form method="post">
+        {% csrf_token %}
+         {{ form.non_field_errors }}
+
+        {% for hidden in form.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+
+        {% for field in form.visible_fields %}
+            {% if field.name != 'payment_option' %}
+                <div class="fieldWrapper">
+                    {{ field.errors }}
+                    {{ field.label_tag }} {{ field }}
+                </div>
+            {% endif %}
+        {% endfor %}
+
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            <ul>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        <!-- Display winning bid details -->
+    <div>
+        {% if bid.is_winner == 'True' %}
+            <p>Item: {{ bid.item.title }}</p>
+            <p>Final Winning Bid: {{ bid.bid_amount }}</p>
+        {% endif %}
+    </div>
+      <div class="payment-options">
+            <div class="payment-option-label">
+                <input type="radio" id="id_payment_option_0" name="payment_option" value="S">
+                <label for="id_payment_option_0">
+                    <img src="{% static 'images/stripe.png' %}" alt="Stripe">
+                    Stripe
+                </label>
+            </div>
+        </div>
+        <input type="submit" value="Proceed to Payment" class="submit-button">
+    </form>
+</div>
+
+{% endblock %}

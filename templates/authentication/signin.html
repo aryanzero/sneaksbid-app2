@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    {% load static %}
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-image: url({% static 'images/bg2.webp' %}); /* Update this path to the exact location of your image */
+            background-size: cover; /* Cover the entire page */
+            background-position: center;
+            background-repeat: no-repeat;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 90%; /* Responsive width */
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.8); /* Slight transparency for better visibility on top of bg */
+            border-radius: 10px; /* Rounded corners for the container */
+            text-align: center; /* Center the text for consistency */
+        }
+
+        h3 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            color: #666;
+            margin-bottom: 5px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: calc(100% - 22px); /* Adjust width to match signup */
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box; /* Include padding and border in the element's width */
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #333;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            text-transform: uppercase; /* Match the button style from signup */
+        }
+
+        button[type="submit"]:hover {
+            background-color: #444;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h3><i class="fas fa-sign-in-alt"></i> Bypass The Vault</h3>
+    <form method="post" action="{% url 'signin' %}"> <!-- Updated form action to use Django URL -->
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit"><i class="fas fa-lock"></i> Log In</button>
+    </form>
+    <p>
+    Forgot your password? <a href="{% url 'password_reset' %}">Reset it here</a>.
+</p>
+</div>
+
+</body>
+</html>
